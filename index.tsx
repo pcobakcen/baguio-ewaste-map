@@ -633,6 +633,7 @@ const App: React.FC = () => {
   const [page, setPage] = useState(window.location.hash.substring(1) || '/');
   const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('isAuthenticated') === 'true');
   const [state, dispatch] = useReducer(appReducer, initialAppState);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const STORAGE_KEY = 'e-waste-data';
 
@@ -646,17 +647,22 @@ const App: React.FC = () => {
       }
     } catch (error) {
       console.error(`Error reading localStorage key “${STORAGE_KEY}”:`, error);
+    } finally {
+      setIsHydrated(true);
     }
   }, []); // Empty dependency array ensures this runs only once on mount
 
   // Effect to save state to localStorage whenever it changes
   useEffect(() => {
+    if (!isHydrated) {
+      return; // Don't save until state is hydrated from storage
+    }
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (error) {
       console.error(`Error setting localStorage key “${STORAGE_KEY}”:`, error);
     }
-  }, [state]); // This runs on initial render AND every time `state` changes
+  }, [state, isHydrated]); // This runs only when state is hydrated and changes
 
   // Effect to synchronize state across browser tabs
   useEffect(() => {
