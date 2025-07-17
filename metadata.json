@@ -1,0 +1,6 @@
+{
+  "name": "Baguio E-Waste Map",
+  "description": "An interactive map for E-Waste drop-off points in Baguio City with an admin panel for management.",
+  "prompt": "",
+  "requestFramePermissions": []
+}
